@@ -26,3 +26,12 @@ for key, values in sections.items():
 print("\n📌 Top Keywords in JD:")
 for kw in keywords:
     print(f"- {kw}")
+
+missing_skills = find_missing_skills(resume_text, jd_text)
+
+print("\n🚨 Missing Keywords from Resume (based on JD):")
+if missing_skills:
+    for skill in missing_skills:
+        print(f"- {skill}")
+else:
+    print("✅ All key skills covered!")
