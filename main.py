@@ -4,7 +4,8 @@ from src.analyzer import (
     score_resume_against_jd,
     extract_keywords,
     find_missing_skills,
-    generate_feedback
+    generate_feedback,
+    gpt_resume_feedback
 )
 from src.utils import read_file
 
@@ -48,3 +49,8 @@ print("\n💬 Resume Feedback:")
 print("--------------------")
 for tip in feedback:
     print(tip)
+
+# GPT Feedback
+print("\n GPT-Powered Feedback:")
+gpt_response = gpt_resume_feedback(resume_text, jd_text, missing_skills)
+print(gpt_response)
