@@ -1,3 +1,5 @@
+import openai
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -37,3 +39,32 @@ def generate_feedback(score, missing_keywords):
     else:
         feedback.append("✅ You’ve covered all key job-related keywords. Good job!")
     return feedback
+
+def gpt_resume_feedback(resume_text, jd_text, missing_keywords):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    prompt = f"""
+    You are a resume coach. Analyze the following resume in the context of the job description.
+    
+    Job Description:
+    {jd_text}
+
+    Resume:
+    {resume_text}
+
+    Missing keywords:
+    {', '.join(missing_keywords)}
+
+    Provide 3 personalized suggestions to improve the resume. Be constructive and actionable.
+    """
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Or "gpt-4" if you have access
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=300
+        )
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return f"❌ GPT Feedback failed: {e}"
