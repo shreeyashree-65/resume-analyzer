@@ -1,6 +1,11 @@
 # main.py
 from src.extractor import extract_text_from_pdf, extract_sections
-from src.analyzer import score_resume_against_jd, extract_keywords
+from src.analyzer import (
+    score_resume_against_jd,
+    extract_keywords,
+    find_missing_skills,
+    generate_feedback
+)
 from src.utils import read_file
 
 resume_path = 'data/sample_resume.pdf'
@@ -35,3 +40,11 @@ if missing_skills:
         print(f"- {skill}")
 else:
     print("✅ All key skills covered!")
+
+# Generate Feedback
+feedback = generate_feedback(score, missing_skills)
+
+print("\n💬 Resume Feedback:")
+print("--------------------")
+for tip in feedback:
+    print(tip)
