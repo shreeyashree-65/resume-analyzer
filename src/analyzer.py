@@ -1,5 +1,6 @@
 import openai
 import os
+from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -68,3 +69,6 @@ def gpt_resume_feedback(resume_text, jd_text, missing_keywords):
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         return f"❌ GPT Feedback failed: {e}"
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
