@@ -14,7 +14,7 @@ def analyze_resume(resume_file, jd_file):
         return "Missing file(s)", "", "", ""
 
     resume_text = extract_text_from_pdf(resume_file.name)
-    jd_text = jd_file.read().decode("utf-8")
+    jd_text = jd_file
 
     score = score_resume_against_jd(resume_text, jd_text)
     missing = find_missing_skills(resume_text, jd_text)
