@@ -1,4 +1,5 @@
 # main.py
+from src.utils import save_feedback_txt, save_feedback_json
 from src.extractor import extract_text_from_pdf, extract_sections
 from src.analyzer import (
     score_resume_against_jd,
@@ -54,3 +55,9 @@ for tip in feedback:
 print("\n GPT-Powered Feedback:")
 gpt_response = gpt_resume_feedback(resume_text, jd_text, missing_skills)
 print(gpt_response)
+
+# Save output
+save_feedback_txt(score, missing_skills, feedback, gpt_response, "output/analysis.txt")
+save_feedback_json(score, missing_skills, feedback, gpt_response, "output/analysis.json")
+
+print("\n✅ Feedback saved to 'output/analysis.txt' and 'output/analysis.json'")
