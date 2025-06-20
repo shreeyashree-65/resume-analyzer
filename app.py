@@ -1,9 +1,7 @@
 import gradio as gr
 from src.extractor import extract_text_from_pdf
-from src.utils import read_file
 from src.analyzer import (
     score_resume_against_jd,
-    extract_keywords,
     find_missing_skills,
     generate_feedback,
     gpt_resume_feedback
