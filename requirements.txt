@@ -1,3 +1,4 @@
 pdfplumber
 scikit-learn
-openai
+openaipip install openai==0.28.1
+gradio
