@@ -10,9 +10,13 @@ from src.analyzer import (
 def analyze_resume(resume_file, jd_file):
     if not resume_file or not jd_file:
         return "Missing file(s)", "", "", ""
+    if not resume_file.strip() or not jd_file.strip():
+        return [], [], "⚠️ Could not extract enough text from resume or JD."
 
-    resume_text = extract_text_from_pdf(resume_file.name)
-    jd_text = jd_file
+
+    resume_text = resume_file.read().decode("utf-8") if hasattr(resume_file, 'read') else resume_file
+    jd_text = jd_file.read().decode("utf-8") if hasattr(jd_file, 'read') else jd_file
+
 
     score = score_resume_against_jd(resume_text, jd_text)
     missing = find_missing_skills(resume_text, jd_text)

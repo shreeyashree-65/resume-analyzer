@@ -14,9 +14,15 @@ def score_resume_against_jd(resume_text, jd_text):
 
 # Clean & extract keywords using TF-IDF
 def extract_keywords(text, top_n=20):
-    cleaned_text = re.sub(r"[^a-zA-Z\s]", "", text.lower())
+    # Clean the text
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", " ", text)          # Remove punctuation
+    text = re.sub(r"\b\w{1,2}\b", "", text)       # Remove short tokens (like "is", "at")
+    text = re.sub(r"\s+", " ", text).strip()      # Normalize whitespace
+
+    # Extract keywords
     tfidf = TfidfVectorizer(stop_words="english", max_features=top_n)
-    tfidf_matrix = tfidf.fit_transform([cleaned_text])
+    tfidf.fit([text])
     return tfidf.get_feature_names_out()
 
 # Find JD keywords not present in resume
