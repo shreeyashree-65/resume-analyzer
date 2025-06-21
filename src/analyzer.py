@@ -1,9 +1,7 @@
 import openai
 import os
-import re
 from keybert import KeyBERT
 from dotenv import load_dotenv
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Score using cosine similarity
@@ -13,7 +11,6 @@ def score_resume_against_jd(resume_text, jd_text):
     score = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
     return round(score * 100, 2)
 
-# Clean & extract keywords using TF-IDF
 def extract_keywords(text, top_n=20):
     kw_model = KeyBERT(model='all-MiniLM-L6-v2')  # Lightweight & fast
     keywords = kw_model.extract_keywords(text, top_n=top_n, stop_words='english')

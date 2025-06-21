@@ -8,16 +8,33 @@ from src.analyzer import (
 )
 
 def analyze_resume(resume_file, jd_file):
-    if not resume_file or not jd_file:
+    import os
+    from src.utils import read_file
+    from src.extractor import extract_text_from_pdf
+
+    # Check file presence
+    if resume_file is None or jd_file is None:
         return "Missing file(s)", "", "", ""
-    if not resume_file.strip() or not jd_file.strip():
-        return [], [], "⚠️ Could not extract enough text from resume or JD."
 
+    # Extract resume text using pdfplumber
+    try:
+        resume_path = resume_file.name if hasattr(resume_file, "name") else resume_file
+        resume_text = extract_text_from_pdf(resume_path)
+    except Exception as e:
+        return "", "", "", f"❌ Failed to read resume: {e}"
 
-    resume_text = resume_file.read().decode("utf-8") if hasattr(resume_file, 'read') else resume_file
-    jd_text = jd_file.read().decode("utf-8") if hasattr(jd_file, 'read') else jd_file
+    # Extract JD text using plain read
+    try:
+        jd_path = jd_file.name if hasattr(jd_file, "name") else jd_file
+        jd_text = read_file(jd_path)
+    except Exception as e:
+        return "", "", "", f"❌ Failed to read job description: {e}"
 
+    # Check if text is too short
+    if len(resume_text.strip()) < 100 or len(jd_text.strip()) < 50:
+        return "", "", "⚠️ Could not extract enough meaningful text.", ""
 
+    # Analysis
     score = score_resume_against_jd(resume_text, jd_text)
     missing = find_missing_skills(resume_text, jd_text)
     rule_feedback = generate_feedback(score, missing)
