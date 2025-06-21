@@ -40,14 +40,16 @@ def analyze_resume(resume_file, jd_file):
     rule_feedback = generate_feedback(score, missing)
     gpt_feedback = gpt_resume_feedback(resume_text, jd_text, missing)
 
+    highlighted_missing = [{"text": kw, "start": 0, "end": len(kw), "entity": "MISSING"} for kw in missing]
+
     return (
         f"{score:.2f}%",
-        "\n".join(missing) if missing else "✅ No missing keywords!",
+        highlighted_missing if missing else [{"text": "✅ No missing keywords!", "entity": "NONE"}],
         "\n".join(rule_feedback),
         gpt_feedback
     )
 
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("# 🤖 Resume Analyzer (with GPT)")
     
     with gr.Row():
@@ -57,7 +59,9 @@ with gr.Blocks() as demo:
     analyze_btn = gr.Button("Analyze Resume")
 
     score_output = gr.Textbox(label="Score")
-    missing_output = gr.Textbox(label="Missing Keywords")
+    missing_output = gr.HighlightedText(
+    label="Missing Keywords",
+    combine_adjacent=True)
     rule_feedback_output = gr.Textbox(label="Rule-Based Feedback")
     gpt_feedback_output = gr.Textbox(label="GPT Feedback")
 
