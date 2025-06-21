@@ -17,9 +17,9 @@ def extract_keywords(text, top_n=20):
     # Clean the text
     text = text.lower()
     text = re.sub(r"[^\w\s]", " ", text)          # Remove punctuation
-    text = re.sub(r"\b\w{1,2}\b", "", text)       # Remove short tokens (like "is", "at")
+    text = re.sub(r"\b\w{1,2}\b", "", text)       # Remove short tokens
+    text = re.sub(r'\b\w{30,}\b', '', text)
     text = re.sub(r"\s+", " ", text).strip()      # Normalize whitespace
-
     # Extract keywords
     tfidf = TfidfVectorizer(stop_words="english", max_features=top_n)
     tfidf.fit([text])
