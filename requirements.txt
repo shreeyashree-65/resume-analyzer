@@ -1,4 +1,7 @@
+keybert
+sentence-transformers
 pdfplumber
 scikit-learn
 openaipip install openai==0.28.1
 gradio
+python_dotenv

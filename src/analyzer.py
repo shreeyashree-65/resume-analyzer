@@ -1,29 +1,37 @@
-import openai
 import os
-from keybert import KeyBERT
+import openai
 from dotenv import load_dotenv
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from keybert import KeyBERT
 
-# Score using cosine similarity
+# Load environment variables
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Initialize KeyBERT model
+kw_model = KeyBERT(model='all-MiniLM-L6-v2')
+
+# ✅ Score similarity between resume and JD using TF-IDF
 def score_resume_against_jd(resume_text, jd_text):
-    tfidf = TfidfVectorizer(stop_words="english")
+    tfidf = TfidfVectorizer(stop_words='english')
     tfidf_matrix = tfidf.fit_transform([resume_text, jd_text])
     score = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
     return round(score * 100, 2)
 
+# ✅ Extract top keywords using KeyBERT
 def extract_keywords(text, top_n=20):
-    kw_model = KeyBERT(model='all-MiniLM-L6-v2')  # Lightweight & fast
     keywords = kw_model.extract_keywords(text, top_n=top_n, stop_words='english')
-    return [kw[0] for kw in keywords]
+    return [kw[0] for kw in keywords if len(kw[0]) > 2]
 
-# Find JD keywords not present in resume
+# ✅ Find which job description keywords are missing in the resume
 def find_missing_skills(resume_text, jd_text, top_n=20):
     jd_keywords = extract_keywords(jd_text, top_n)
-    resume_keywords = extract_keywords(resume_text, top_n=50)
-    missing = [kw for kw in jd_keywords if kw not in resume_keywords]
+    resume_words = set(resume_text.lower().split())
+    missing = [kw for kw in jd_keywords if kw.lower() not in resume_words]
     return missing
 
-# Give score-based & keyword feedback
+# ✅ Rule-based suggestions
 def generate_feedback(score, missing_keywords):
     feedback = []
 
@@ -42,24 +50,22 @@ def generate_feedback(score, missing_keywords):
 
     return feedback
 
-# GPT-based personalized suggestions
+# ✅ GPT-based personalized feedback
 def gpt_resume_feedback(resume_text, jd_text, missing_keywords):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
     prompt = f"""
-You are a resume coach. Analyze the following resume in the context of the job description.
+    You are a resume coach. Analyze the following resume in the context of the job description.
 
-Job Description:
-{jd_text}
+    Job Description:
+    {jd_text}
 
-Resume:
-{resume_text}
+    Resume:
+    {resume_text}
 
-Missing keywords:
-{', '.join(missing_keywords)}
+    Missing keywords:
+    {', '.join(missing_keywords)}
 
-Provide 3 personalized suggestions to improve the resume. Be constructive and actionable.
-"""
+    Provide 3 personalized suggestions to improve the resume. Be constructive and actionable.
+    """
 
     try:
         response = openai.ChatCompletion.create(
@@ -71,7 +77,3 @@ Provide 3 personalized suggestions to improve the resume. Be constructive and ac
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         return f"❌ GPT Feedback failed: {e}"
-
-# Load env vars
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
