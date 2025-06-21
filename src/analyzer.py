@@ -1,6 +1,7 @@
 import openai
 import os
 import re
+from keybert import KeyBERT
 from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -14,16 +15,9 @@ def score_resume_against_jd(resume_text, jd_text):
 
 # Clean & extract keywords using TF-IDF
 def extract_keywords(text, top_n=20):
-    # Clean the text
-    text = text.lower()
-    text = re.sub(r"[^\w\s]", " ", text)          # Remove punctuation
-    text = re.sub(r"\b\w{1,2}\b", "", text)       # Remove short tokens
-    text = re.sub(r'\b\w{30,}\b', '', text)
-    text = re.sub(r"\s+", " ", text).strip()      # Normalize whitespace
-    # Extract keywords
-    tfidf = TfidfVectorizer(stop_words="english", max_features=top_n)
-    tfidf.fit([text])
-    return tfidf.get_feature_names_out()
+    kw_model = KeyBERT(model='all-MiniLM-L6-v2')  # Lightweight & fast
+    keywords = kw_model.extract_keywords(text, top_n=top_n, stop_words='english')
+    return [kw[0] for kw in keywords]
 
 # Find JD keywords not present in resume
 def find_missing_skills(resume_text, jd_text, top_n=20):
