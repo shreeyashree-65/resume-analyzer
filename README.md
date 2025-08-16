@@ -35,13 +35,13 @@ resume-analyzer/
 - Python  
 
 **Libraries & Frameworks**  
-- [pdfplumber] – PDF text extraction  
-- [spaCy] – NLP processing  
-- [Hugging Face Transformers] – contextual embeddings  
-- [sentence-transformers] – semantic similarity  
-- [KeyBERT] – keyword extraction  
-- [scikit-learn] – ML utilities and scoring  
-- [Gradio] – user-friendly frontend  
+- **pdfplumber** – PDF text extraction  
+- **spaCy** – NLP processing  
+- **Hugging Face Transformers** – contextual embeddings  
+- **sentence-transformers** – semantic similarity  
+- **KeyBERT** – keyword extraction  
+- **scikit-learn** – ML utilities and scoring  
+- **Gradio** – user-friendly frontend  
 
 **Tools**  
 - Git, GitHub, VSCode, Postman (for API testing)
